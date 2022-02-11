@@ -6,7 +6,7 @@ using System;
 
 public class CameraController : MonoBehaviour
 {
-	public static CameraController s_instance { get; private set; } 
+	public static CameraController Instance { get; private set; } 
 
     private CinemachineVirtualCamera m_LiveCam;
 	private CinemachineBasicMultiChannelPerlin m_Perlin;
@@ -18,9 +18,9 @@ public class CameraController : MonoBehaviour
 
 	private void Initialize()
 	{
-		if (s_instance != null)
-			s_instance = null;
-		s_instance = this;
+		if (Instance != null)
+			Instance = null;
+		Instance = this;
 		m_LiveCam = GetComponent<CinemachineVirtualCamera>();
 		m_Perlin = m_LiveCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
 	}

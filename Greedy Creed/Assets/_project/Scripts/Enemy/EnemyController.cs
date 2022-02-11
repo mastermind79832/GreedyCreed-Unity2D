@@ -19,13 +19,13 @@ public class EnemyController : MonoBehaviour
 	public float fireRate;
 
 	private bool m_InAttackRange, m_InDetectionRange, m_FireTimeout;
-	private PlayerContoller player;
+	private PlayerController player;
 	
 	private void Start()
 	{
+		player = PlayerController.Instance;
 		if (isTurretMode)
 			detectionRange = attackRange;
-		player = PlayerContoller.instance;
 	}
 
     void Update()

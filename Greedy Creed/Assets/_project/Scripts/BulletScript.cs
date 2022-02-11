@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class BulletScript : MonoBehaviour
 {
+	public float bulletPower = 5;
 	public float travelSpeed;
 	public CircleCollider2D col;
 	public Animator anim;
@@ -28,7 +29,7 @@ public class BulletScript : MonoBehaviour
 			transform.localPosition += Time.fixedDeltaTime * travelSpeed * transform.up;
 	}
 
-	private void OnTriggerEnter2D(Collider2D collision)
+	public void BulletHit()
 	{
 		StartCoroutine(DestroyBullet());
 	}
