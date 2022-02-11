@@ -14,6 +14,7 @@ public class PlayerContoller : MonoBehaviour
     public float MoveSpeed = 2f;
 
 	[Header("Dash")]
+	public KeyCode dashKey;
 	public float dashSpeed = 5f;
 	public float dashTime = 0.2f;
 	public float shakeTime = 0.2f;
@@ -47,6 +48,13 @@ public class PlayerContoller : MonoBehaviour
 	{
 		GetInput();
 	}
+	private void FixedUpdate()
+	{
+		if (m_IsDashing)
+			return;
+		MovePositon();
+		RotateToMouse();
+	}
 
 	private void GetInput()
 	{
@@ -55,10 +63,11 @@ public class PlayerContoller : MonoBehaviour
 		m_Input.x = Input.GetAxis("Horizontal");
 		m_Input.y = Input.GetAxis("Vertical");
 
-		if (Input.GetKeyDown(KeyCode.LeftShift))
+		if (Input.GetKeyDown(dashKey) && m_Input != Vector2.zero)
 			Dash();
 	}
 
+	#region	Dashing
 	private void Dash()
 	{
 		m_IsDashing = true;
@@ -68,11 +77,9 @@ public class PlayerContoller : MonoBehaviour
 
 	IEnumerator Dashing()
 	{
-		float speed = MoveSpeed;
-		MoveSpeed += dashSpeed;
+		m_Rigidbody.velocity += m_Input.normalized * dashSpeed;
 		StartCoroutine(DashEffect());
-		yield return new WaitForSeconds(dashTime);
-		MoveSpeed = speed;
+		yield return new WaitForSeconds(dashTime/10);
 		m_IsDashing = false;
 	}
 
@@ -84,16 +91,11 @@ public class PlayerContoller : MonoBehaviour
 		yield return new WaitForSeconds(dashEffect.main.duration);
 		emission.enabled = false;
 	}
-
-	private void FixedUpdate()
-	{
-		MovePositon();
-		RotateToMouse();
-	}
+	# endregion
 
 	private void MovePositon()
 	{
-		m_Rigidbody.MovePosition(m_Rigidbody.position + (m_Input * MoveSpeed * Time.fixedDeltaTime));
+		m_Rigidbody.velocity = m_Input.normalized * MoveSpeed;
 	}
 
 	private void RotateToMouse()
