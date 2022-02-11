@@ -7,6 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(CircleCollider2D))]
 public class PlayerContoller : MonoBehaviour
 {
+	public static PlayerContoller instance { get; private set; }
+
     //public string Username = "Creed";
 	//public int healthCount = 3;
 	//public float piggyBank = 10;
@@ -16,7 +18,8 @@ public class PlayerContoller : MonoBehaviour
 	[Header("Dash")]
 	public KeyCode dashKey;
 	public float dashSpeed = 5f;
-	public float dashTime = 0.2f;
+	[Tooltip("effective time = dashTime/10")]
+	public float dashTime = 1;
 	public float shakeTime = 0.2f;
 	public float shakeIntensity = 1.5f;
 	public ParticleSystem dashEffect;
@@ -29,6 +32,7 @@ public class PlayerContoller : MonoBehaviour
 
 	private void Awake()
 	{
+		instance = this;
 		Caching();
 		Initialization();
 	}
@@ -37,13 +41,13 @@ public class PlayerContoller : MonoBehaviour
 	{
 		m_IsDashing = false;
 	}
-
 	private void Caching()
 	{
 		m_Rigidbody = GetComponent<Rigidbody2D>();
 		m_Collider = GetComponent<CircleCollider2D>();
 	}
 
+	#region Update
 	private void Update()
 	{
 		GetInput();
@@ -55,7 +59,7 @@ public class PlayerContoller : MonoBehaviour
 		MovePositon();
 		RotateToMouse();
 	}
-
+	#endregion
 	private void GetInput()
 	{
 		if (m_IsDashing)
@@ -65,6 +69,10 @@ public class PlayerContoller : MonoBehaviour
 
 		if (Input.GetKeyDown(dashKey) && m_Input != Vector2.zero)
 			Dash();
+	}
+	public Vector2 GetLocation()
+	{
+		return transform.position;
 	}
 
 	#region	Dashing
@@ -91,8 +99,9 @@ public class PlayerContoller : MonoBehaviour
 		yield return new WaitForSeconds(dashEffect.main.duration);
 		emission.enabled = false;
 	}
-	# endregion
+	#endregion
 
+	#region Movement
 	private void MovePositon()
 	{
 		m_Rigidbody.velocity = m_Input.normalized * MoveSpeed;
@@ -105,5 +114,6 @@ public class PlayerContoller : MonoBehaviour
 		m_FacingDirection = (mousePosition - transform.position).normalized;
 		transform.up = m_FacingDirection;
 	}
+	#endregion
 
 }
