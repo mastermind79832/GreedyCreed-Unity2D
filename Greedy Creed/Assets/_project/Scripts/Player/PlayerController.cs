@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +9,8 @@ public class PlayerController : MonoBehaviour
 	public static PlayerController Instance { get; private set; }
 	
     public float MoveSpeed = 2f;
+	public AudioSource m_Source;
+	public AudioClip[] moveAudio;
 
     private Rigidbody2D m_Rigidbody;
     private CircleCollider2D m_Collider;
@@ -17,6 +18,7 @@ public class PlayerController : MonoBehaviour
 	private Vector2 m_FacingDirection;
 	private DashControl m_Dash;
 	private PlayerHealth m_health;
+	private bool m_IsAudioPlaying;
 
 	private void Awake()
 	{
@@ -30,6 +32,7 @@ public class PlayerController : MonoBehaviour
 		m_Collider = GetComponent<CircleCollider2D>();
 		m_Dash = GetComponent<DashControl>();
 		m_health = GetComponent<PlayerHealth>();
+		m_Source = GetComponent<AudioSource>();
 	}
 
 	private void Update()
@@ -49,6 +52,23 @@ public class PlayerController : MonoBehaviour
 	{
 		m_Input.x = Input.GetAxis("Horizontal");
 		m_Input.y = Input.GetAxis("Vertical");
+		if (m_Input != Vector2.zero && !m_IsAudioPlaying)
+			StartCoroutine(WaitForAudio(GetRandomAudio(moveAudio)));
+	}
+
+	IEnumerator WaitForAudio(AudioClip clip)
+	{
+		m_IsAudioPlaying = true;
+		m_Source.clip = clip;
+		m_Source.Play();
+		float wait = clip.length;
+		yield return new WaitForSeconds(wait);
+		m_IsAudioPlaying = false;
+	}
+
+	private AudioClip GetRandomAudio(AudioClip[] clips)
+	{
+		return clips[Random.Range(0, clips.Length - 1)];
 	}
 
 	public Vector2 GetMoveDirection()
@@ -88,7 +108,6 @@ public class PlayerController : MonoBehaviour
 		if (bullet != null)
 		{
 			m_health.GetDamaged(bullet.bulletPower);
-		
 			bullet.BulletHit();
 		}
 	}

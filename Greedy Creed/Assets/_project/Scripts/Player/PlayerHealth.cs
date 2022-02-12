@@ -10,10 +10,12 @@ public class PlayerHealth : MonoBehaviour
 	public Image healthUI;
 	public float damageShakeIntensity;
 	public float damageShakeTime;
+	private PlayerAudioController m_Audio;
 
 	private void Awake()
 	{
 		m_CurrentHealth = maxHealth;
+		m_Audio = GetComponent<PlayerAudioController>();
 	}
 
 	public void Heal(float amount)
@@ -26,6 +28,7 @@ public class PlayerHealth : MonoBehaviour
 
 	public void GetDamaged(float amount)
 	{
+		m_Audio.PlayAudio(PlayerAudio.hit);
 		CameraController.Instance.CameraShake(damageShakeIntensity, damageShakeTime);
 		m_CurrentHealth -= amount;
 		UpdateHealthUI();

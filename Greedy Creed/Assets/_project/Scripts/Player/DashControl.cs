@@ -21,12 +21,14 @@ public class DashControl : MonoBehaviour
 	private bool m_IsDashing;
 	private float m_CurrentDashCharge;
 	private PlayerController player;
+	private PlayerAudioController m_Audio;
 
 	private void Awake()
 	{
 		m_IsDashing = false;
 		m_CurrentDashCharge = dashCharge;
 		player = GetComponent<PlayerController>();
+		m_Audio = GetComponent<PlayerAudioController>();
 	}
 
 	private void Update()
@@ -37,9 +39,14 @@ public class DashControl : MonoBehaviour
 
 	private void GetInput()
 	{
-		if (Input.GetKeyDown(dashKey) && CanDash())
+		if (Input.GetKeyDown(dashKey))
 		{
-			Dash();
+			if (CanDash())
+			{
+				Dash();
+			}
+			else
+				m_Audio.PlayAudio(PlayerAudio.denial);
 		}
 	}
 
@@ -63,6 +70,7 @@ public class DashControl : MonoBehaviour
 
 	private void Dash()
 	{
+		m_Audio.PlayAudio(PlayerAudio.dash);
 		m_IsDashing = true;
 		CameraController.Instance.CameraShake(shakeIntensity, shakeTime);
 		StartCoroutine(Dashing());
