@@ -88,6 +88,7 @@ public class PlayerController : MonoBehaviour
 		if (bullet != null)
 		{
 			m_health.GetDamaged(bullet.bulletPower);
+		
 			bullet.BulletHit();
 		}
 	}

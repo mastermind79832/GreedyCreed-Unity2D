@@ -12,6 +12,8 @@ public class EnemyController : MonoBehaviour
     public bool isTurretMode;
     public float attackRange;
     public float detectionRange;
+	public float moveSpeed;
+	public LayerMask blockageLayer;
 
 	[Header ("Bullet")]
 	public Transform aim;
@@ -20,10 +22,12 @@ public class EnemyController : MonoBehaviour
 
 	private bool m_InAttackRange, m_InDetectionRange, m_FireTimeout;
 	private PlayerController player;
+	private Vector2 m_StartLocation;
 	
 	private void Start()
 	{
 		player = PlayerController.Instance;
+		m_StartLocation = transform.position;
 		if (isTurretMode)
 			detectionRange = attackRange;
 	}
@@ -39,11 +43,30 @@ public class EnemyController : MonoBehaviour
 		if (m_InDetectionRange)
 		{
 			RotateTo(player.GetLocation());
+			if (m_InAttackRange && !m_FireTimeout)
+			{
+				StartCoroutine(FireBullet());
+				return;
+			}
+			if (!isTurretMode)
+			{
+				MoveTo(player.GetLocation());
+			}
 		}
-		if (m_InAttackRange && !m_FireTimeout)
+		else if (!InStartingLocation())
 		{
-			StartCoroutine(FireBullet());
+			MoveTo(m_StartLocation);
 		}
+	}
+
+	private bool InStartingLocation()
+	{
+		return (Vector2)transform.position == m_StartLocation;
+	}
+
+	private void MoveTo(Vector2 location)
+	{
+		transform.position = Vector2.MoveTowards(transform.position, location, moveSpeed * Time.deltaTime);
 	}
 
 	IEnumerator FireBullet()
@@ -67,6 +90,20 @@ public class EnemyController : MonoBehaviour
 	{
 		m_InDetectionRange = CheckPlayerinRange(detectionRange);
 		m_InAttackRange = CheckPlayerinRange(attackRange);
+
+		if (m_InDetectionRange)
+			CheckBlockade();
+	}
+
+	private void CheckBlockade()
+	{
+		RaycastHit2D hit;
+		Vector2 dir = player.GetLocation() - (Vector2)transform.position;
+		hit = Physics2D.Raycast(transform.position, dir.normalized,detectionRange,blockageLayer);
+		if(hit)
+		{
+			m_InDetectionRange = m_InAttackRange = false;
+		}
 	}
 
 	private bool CheckPlayerinRange(float range)

@@ -8,6 +8,8 @@ public class PlayerHealth : MonoBehaviour
 	public float maxHealth = 50;
 	private float m_CurrentHealth;
 	public Image healthUI;
+	public float damageShakeIntensity;
+	public float damageShakeTime;
 
 	private void Awake()
 	{
@@ -24,6 +26,7 @@ public class PlayerHealth : MonoBehaviour
 
 	public void GetDamaged(float amount)
 	{
+		CameraController.Instance.CameraShake(damageShakeIntensity, damageShakeTime);
 		m_CurrentHealth -= amount;
 		UpdateHealthUI();
 	}
