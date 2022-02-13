@@ -43,4 +43,9 @@ public class BulletScript : MonoBehaviour
 		yield return new WaitForSeconds(0.1f);
 		Destroy(gameObject);
 	}
+
+	private void OnTriggerEnter2D(Collider2D collision)
+	{
+		BulletHit();
+	}
 }

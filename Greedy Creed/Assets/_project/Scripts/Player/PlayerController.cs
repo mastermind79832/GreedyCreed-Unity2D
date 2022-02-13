@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CircleCollider2D))]
@@ -11,6 +13,8 @@ public class PlayerController : MonoBehaviour
     public float MoveSpeed = 2f;
 	public AudioSource m_Source;
 	public AudioClip[] moveAudio;
+	public float coins;
+	public Text coinText;
 
     private Rigidbody2D m_Rigidbody;
     private CircleCollider2D m_Collider;
@@ -35,10 +39,14 @@ public class PlayerController : MonoBehaviour
 		m_Source = GetComponent<AudioSource>();
 	}
 
+	internal void GameOver()
+	{
+		UIManager.Instance.GameOver(coins);
+	}
+
 	private void Update()
 	{
 		GetInput();
-
 	}
 	private void FixedUpdate()
 	{
@@ -101,6 +109,20 @@ public class PlayerController : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
+
+		if (collision.CompareTag("Coins"))
+		{
+			coins += 10;
+			coinText.text = coins.ToString();
+			Destroy(collision.gameObject);
+			return;
+		}
+
+		if(collision.CompareTag("Exit"))
+		{
+			GameOver();
+		}
+
 		if (m_Dash.IsDashing())
 			return;
 	
@@ -109,6 +131,7 @@ public class PlayerController : MonoBehaviour
 		{
 			m_health.GetDamaged(bullet.bulletPower);
 			bullet.BulletHit();
+			return;
 		}
 	}
 }

@@ -32,6 +32,10 @@ public class PlayerHealth : MonoBehaviour
 		CameraController.Instance.CameraShake(damageShakeIntensity, damageShakeTime);
 		m_CurrentHealth -= amount;
 		UpdateHealthUI();
+		if(m_CurrentHealth <= 0)
+		{
+			PlayerController.Instance.GameOver();
+		}
 	}
 
 	private void UpdateHealthUI()

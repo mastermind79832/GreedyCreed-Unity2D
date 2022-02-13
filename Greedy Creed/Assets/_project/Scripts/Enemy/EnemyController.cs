@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -91,20 +90,20 @@ public class EnemyController : MonoBehaviour
 		m_InDetectionRange = CheckPlayerinRange(detectionRange);
 		m_InAttackRange = CheckPlayerinRange(attackRange);
 
-		if (m_InDetectionRange)
-			CheckBlockade();
+		//if (m_InDetectionRange)
+		//	CheckBlockade();
 	}
 
-	private void CheckBlockade()
-	{
-		RaycastHit2D hit;
-		Vector2 dir = player.GetLocation() - (Vector2)transform.position;
-		hit = Physics2D.Raycast(transform.position, dir.normalized,detectionRange,blockageLayer);
-		if(hit)
-		{
-			m_InDetectionRange = m_InAttackRange = false;
-		}
-	}
+	//private void CheckBlockade()
+	//{
+	//	RaycastHit2D hit;
+	//	Vector2 dir = player.GetLocation() - (Vector2)transform.position;
+	//	hit = Physics2D.Raycast(transform.position, dir.normalized,detectionRange,blockageLayer,detectionRange);
+	//	if(hit)
+	//	{
+	//		m_InDetectionRange = m_InAttackRange = false;
+	//	}
+	//}
 
 	private bool CheckPlayerinRange(float range)
     {
